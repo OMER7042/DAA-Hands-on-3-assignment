@@ -9,24 +9,114 @@ c4 = Σ(i=1 to n) Σ(j=1 to n) 1
 T(n) = c1*1 + c2*Σ(i=1 to n)(n+1) + c3*Σ(j=1 to n) n(n+1) + c4*Σ(i=1 to n) Σ(j=1 to n) n^2
      = c1 + (c2*c3)(n+1)*n + c4 (n^2)
      = a(n)^2 + b(n) + c
-Time complexity is O(n^2)
 
+Time complexity is BIG OH- O(n^2)
+also it is BIG THETHA- Θ(n^2)
 
 
 2.Implementation of the function in PYTHON
 
 
 import timeit
+import numpy as np
+from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
 
-def calc_x(n):
+
+
+# Define the function
+def calcfn(n):
     x = 1
     for i in range(1, n + 1):
         for j in range(1, n + 1):
             x = x + 1
     return x
 
-# benchmarking it to plot the graph for time vs input
-exec_times = [timeit.timeit(lambda: calc_x(n), number=1) for n in [1, 2, 3, 10, 100, 500, 1000, 5000, 10000, 20000]]
+# Benchmarking 
+time_exec = [timeit.timeit(lambda: calcfn(n), number=1) for n in [1, 2, 3, 10, 100, 500, 1000, 5000, 10000, 20000]]
 
-for n, execution_time in zip([1, 2, 3, 10, 100, 500, 1000, 5000, 10000, 20000], exec_times):
-    print(f"For n={n}, Execution Time: {execution_time:.4f} seconds")
+# Input sizes
+n_values = [1, 2, 3, 10, 100, 500, 1000, 5000, 10000, 20000]
+
+# Plynomial curve to fit to the data
+def poly_curve_fit(x, a, b, c):
+    return a * x ** 2 + b * x + c
+
+popt, _ = curve_fit(poly_curve_fit, n_values, time_exec)
+
+# Generate points for the curve
+x_axis_c = np.linspace(min(n_values), max(n_values), 10)
+y_axis_c = poly_curve_fit(x_axis_c, *popt)
+
+# Plotting the graph using all the inputs
+plt.scatter(n_values, time_exec, label='Execution Times')
+plt.plot(x_axis_c, y_axis_c, 'r-', label='Fitted Polynomial(curve)')
+plt.xlabel('n')
+plt.ylabel('Execution Time (seconds)')
+plt.title('Execution Time vs Input Size')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+
+3.UPPER BOUNDS AND LOWER BOUNDS
+
+import timeit
+import numpy as np
+from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
+
+
+
+# Define the function
+def calcfn(n):
+    x = 1
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            x = x + 1
+    return x
+
+# Benchmarking 
+time_exec = [timeit.timeit(lambda: calcfn(n), number=1) for n in [1, 2, 3, 10, 100, 500, 1000, 5000, 10000, 20000]]
+
+# Input sizes
+n_values = [1, 2, 3, 10, 100, 500, 1000, 5000, 10000, 20000]
+
+# Fit a polynomial curve to the data
+def poly_curve_fit(x, a, b, c):
+    return a * x ** 2 + b * x + c
+
+popt, _ = curve_fit(poly_curve_fit, n_values, time_exec)
+
+# Generate points for the curve
+x_axis_c = np.linspace(min(n_values), max(n_values), 100)
+y_axis_c = poly_curve_fit(x_axis_c, *popt)
+
+# Define upper and lower bounds for the polynomial curve
+def upper_bound(x, a, b, c):
+    return poly_curve_fit(x, a, b, c) * 1.1  # 10% increase
+
+def lower_bound(x, a, b, c):
+    return poly_curve_fit(x, a, b, c) * 0.9  # 10% decrease
+
+# Fit upper and lower bound curves
+popt_upper, _ = curve_fit(upper_bound, n_values, time_exec)
+popt_lower, _ = curve_fit(lower_bound, n_values, time_exec)
+
+# Generate points for the upper and lower bound curves
+y_upper = upper_bound(x_axis_c, *popt_upper)
+y_lower = lower_bound(x_axis_c, *popt_lower)
+
+# Plotting
+plt.scatter(n_values, time_exec, label='Execution Times')
+plt.plot(x_axis_c, y_axis_c, 'r-', label='Fitted Polynomial(curve)')
+plt.plot(x_axis_c, y_upper, 'g--', label='Upper Bound')
+plt.plot(x_axis_c, y_lower, 'b--', label='Lower Bound')
+plt.xlabel('n')
+plt.ylabel('Execution Time (seconds)')
+plt.title('Execution Time vs Input Size with Bounds')
+plt.legend()
+plt.grid(True)
+plt.show()
+
