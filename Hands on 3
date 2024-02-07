@@ -120,3 +120,29 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
+
+4.EYE BALL THE LOCATION OF N(0)
+
+To find N(0) we zoomed in the plot of time and input.
+We chose N(0) because it basically refers as the point where our data begins to exhibit abnormal behaviour that
+does not fits with the polynomial curve as shown in the graph.
+
+4. WILL IT INCREASE HOW LONG IT TAKES THE ALGORITHM TO RUN IF I CHANGE THE FUNCTION?
+x = f(n)
+   x = 1;
+   y = 1;
+   for i = 1:n
+        for j = 1:n
+             x = x + 1;
+        y = i + j;
+
+The modification will lead to an extra operation within the inner loop, which leads to increased computation for
+each iteration of that loop. So,the overall runtime of the modified algorithm may increase when compared to the original one.
+The time taken may increase on an average of 10 seconds.
+
+5.Will it effect your results from #1?
+Even after the modifications made to the algorithm, the time complexity of the modified algorithm will remain O(n^2) but with a larger constant factor due to the additional operation.
+
+
+
+
